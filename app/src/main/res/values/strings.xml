@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RecyclerView App</string>
+    <string name="contact_data_hint">Фамилия\n Имя\n Номер</string>
 </resources>
