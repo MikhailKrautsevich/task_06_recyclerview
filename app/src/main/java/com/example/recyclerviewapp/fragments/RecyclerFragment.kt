@@ -2,10 +2,9 @@ package com.example.recyclerviewapp.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
+import androidx.appcompat.widget.SearchView
 import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -16,6 +15,8 @@ import com.example.recyclerviewapp.DataSupplier
 import com.example.recyclerviewapp.R
 import com.example.recyclerviewapp.data.ContactData
 import com.squareup.picasso.Picasso
+import java.util.*
+import kotlin.collections.ArrayList
 
 class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
 
@@ -25,6 +26,7 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
     private var recyclerView: RecyclerView? = null
     private var curLayoutManager: LinearLayoutManager? = null
     private var currentHolderPosition = -1
+    private var tempList: MutableList<ContactData> = ArrayList()
 
     companion object {
         const val REQUEST_KEY = "123R"
@@ -36,6 +38,47 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
         if (context is DataSupplier) {
             dataSource = context
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.search_menu, menu)
+        val menuItem = menu.findItem(R.id.search_menu_view)
+        val searchView = menuItem.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                tempList.clear()
+                val allContacts = dataSource?.getContacts()
+                p0?.let { text ->
+                    val textToSearch: String = text.lowercase(Locale.getDefault())
+                    if (text.isNotBlank()) {
+                        allContacts?.let {
+                            for (i in 0 until allContacts.size) {
+                                if ("${allContacts[i].name} ${allContacts[i].lastname}".lowercase()
+                                        .contains(
+                                            textToSearch
+                                        )
+                                ) {
+                                    tempList.add(allContacts[i])
+                                }
+                                recyclerView?.adapter = ContactAdapter(tempList)
+                                recyclerView?.adapter?.notifyDataSetChanged()
+                            }
+                        }
+                    } else {
+                        allContacts?.let {
+                            recyclerView?.adapter = ContactAdapter(it)
+                            recyclerView?.adapter?.notifyDataSetChanged()
+                        }
+                    }
+                }
+                return false
+            }
+        })
     }
 
     override fun onCreateView(
@@ -50,6 +93,7 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         setFragmentResultListener(REQUEST_KEY) { _, _ ->
             recyclerView?.adapter?.notifyDataSetChanged()
         }
