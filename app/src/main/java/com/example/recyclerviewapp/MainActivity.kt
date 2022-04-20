@@ -41,4 +41,10 @@ class MainActivity : AppCompatActivity(), DataSupplier {
         }
         return contact
     }
+
+    override fun deleteContactByPos(pos: Int) {
+        model?.deleteContact(pos)
+    }
+
+
 }

@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerviewapp.DataSupplier
@@ -26,6 +27,7 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
     private var currentHolderPosition = -1
 
     companion object {
+        const val REQUEST_KEY = "123R"
         fun newRecyclerFragment() = RecyclerFragment()
     }
 
@@ -44,6 +46,13 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
         val v = inflater.inflate(R.layout.fragment_recycler, container, false)
         recyclerView = v.findViewById(R.id.recycler_contacts)
         return v
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setFragmentResultListener(REQUEST_KEY) { _, _ ->
+            recyclerView?.adapter?.notifyDataSetChanged()
+        }
     }
 
     override fun onStart() {
@@ -76,16 +85,16 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
     .Adapter<ContactAdapter.ContactHolder>() {
 
         inner class ContactHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
-            View.OnClickListener {
+            View.OnClickListener, View.OnLongClickListener {
             private val contactPic: ImageView = itemView.findViewById(R.id.userPic)
             private val contactInfo: TextView = itemView.findViewById(R.id.contactData)
 
             init {
                 itemView.setOnClickListener(this)
+                itemView.setOnLongClickListener(this)
             }
 
             override fun onClick(p0: View?) {
-//                currentHolderPosition = adapterPosition
                 requireActivity().supportFragmentManager.beginTransaction().replace(
                     R.id.fragment_container,
                     ContactFragment.newContactFragment(adapterPosition),
@@ -99,6 +108,12 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
                     .error(R.drawable.placeholder_error)
                     .into(contactPic)
                 contactInfo.text = contact.toString()
+            }
+
+            override fun onLongClick(p0: View?): Boolean {
+                val dialog = DeleteContactDialog.newDeleteContactDialog(adapterPosition)
+                dialog.show(requireActivity().supportFragmentManager, "TAG!")
+                return true
             }
         }
 

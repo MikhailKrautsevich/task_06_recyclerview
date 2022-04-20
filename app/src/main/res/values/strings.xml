@@ -5,4 +5,7 @@
     <string name="name">Name:</string>
     <string name="lastname">Lastname:</string>
     <string name="number">Number:</string>
+    <string name="delete_con_dialog">Delete this contact?</string>
+    <string name="delete_con">Delete</string>
+    <string name="cancel">Cancel</string>
 </resources>
