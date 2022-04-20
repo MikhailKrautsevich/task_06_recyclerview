@@ -33,4 +33,12 @@ class MainActivity : AppCompatActivity(), DataSupplier {
         }
         return list
     }
+
+    override fun getContactByPosition(pos: Int): ContactData? {
+        var contact: ContactData? = null
+        model?.let {
+            contact = it.getContByPos(pos)
+        }
+        return contact
+    }
 }

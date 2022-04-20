@@ -2,7 +2,6 @@ package com.example.recyclerviewapp.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,9 +18,12 @@ import com.squareup.picasso.Picasso
 
 class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
 
+    private val picasso = Picasso.get()
+
     private var dataSource: DataSupplier? = null
     private var recyclerView: RecyclerView? = null
-    private val picasso = Picasso.get()
+    private var curLayoutManager: LinearLayoutManager? = null
+    private var currentHolderPosition = -1
 
     companion object {
         fun newRecyclerFragment() = RecyclerFragment()
@@ -47,10 +49,21 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
     override fun onStart() {
         super.onStart()
         recyclerView?.let {
-            it.layoutManager = LinearLayoutManager(requireActivity(), RecyclerView.VERTICAL, false)
+            curLayoutManager = LinearLayoutManager(requireActivity(), RecyclerView.VERTICAL, false)
+            it.layoutManager = curLayoutManager
         }
         dataSource?.let {
             recyclerView?.adapter = ContactAdapter(it.getContacts())
+        }
+        if (currentHolderPosition > 0) {
+            recyclerView?.scrollToPosition(currentHolderPosition)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        curLayoutManager?.let {
+            currentHolderPosition = it.findFirstVisibleItemPosition()
         }
     }
 
@@ -72,7 +85,12 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
             }
 
             override fun onClick(p0: View?) {
-                Log.d("123456", "Click")
+//                currentHolderPosition = adapterPosition
+                requireActivity().supportFragmentManager.beginTransaction().replace(
+                    R.id.fragment_container,
+                    ContactFragment.newContactFragment(adapterPosition),
+                    null
+                ).addToBackStack("TAG").commit()
             }
 
             fun bind(contact: ContactData) {

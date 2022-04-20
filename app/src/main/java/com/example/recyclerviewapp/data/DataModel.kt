@@ -35,6 +35,8 @@ class DataModel(context: Context) {
 
     fun getContacts() = contacts as ArrayList
 
+    fun getContByPos(pos: Int) = contacts[pos]
+
     fun addContact(contact: ContactData, pos: Int) {
         contacts[pos] = contact
     }
