@@ -131,18 +131,18 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
     }
 
     private fun changeRecyclerData() {
-        recyclerView?.getRecycledViewPool()?.clear()
+        recyclerView?.recycledViewPool?.clear()
         val conAdapter = recyclerView?.adapter as ContactAdapter
         dataSource?.getContacts()?.let {
-            val newList : MutableList<ContactData> = ArrayList()
+            val newList: MutableList<ContactData> = ArrayList()
             newList.addAll(it)
             conAdapter.changeContacts(newList as List<ContactData>)
         }
     }
 
     private fun changeRecyclerData(list: List<ContactData>) {
-        recyclerView?.getRecycledViewPool()?.clear()
-        val newList : MutableList<ContactData> = ArrayList()
+        recyclerView?.recycledViewPool?.clear()
+        val newList: MutableList<ContactData> = ArrayList()
         newList.addAll(list)
         val conAdapter = recyclerView?.adapter as ContactAdapter
         conAdapter.changeContacts(list = newList as ArrayList)
