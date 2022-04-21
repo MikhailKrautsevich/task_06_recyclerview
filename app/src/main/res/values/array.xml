@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="names">
+        <item>Андрей</item>
+        <item>Борис</item>
+        <item>Виктор</item>
+        <item>Григорий</item>
+        <item>Дмитрий</item>
+        <item>Егор</item>
+        <item>Жора</item>
+        <item>Змитер</item>
+        <item>Игнат</item>
+        <item>Константин</item>
+        <item>Лёня</item>
+        <item>Михаил</item>
+        <item>Николай</item>
+        <item>Олег</item>
+        <item>Прокоп</item>
+        <item>Роберт</item>
+        <item>Свирид</item>
+        <item>Степан</item>
+        <item>Трофим</item>
+    </string-array>
+    <string-array name="lastnames">
+        <item>Андреев</item>
+        <item>Борисюк</item>
+        <item>Викторчик</item>
+        <item>Григоренко</item>
+        <item>Дмитриев</item>
+        <item>Егорьев</item>
+        <item>Жорак</item>
+        <item>Змитерко</item>
+        <item>Игнатович</item>
+        <item>Константинов</item>
+        <item>Лёнчик</item>
+        <item>Михалёв</item>
+        <item>Николайчук</item>
+        <item>Олеговой</item>
+        <item>Остроухов</item>
+        <item>Прокопюк</item>
+        <item>Робертский</item>
+        <item>Спирин</item>
+        <item>Третьяк</item>
+        <item>Степанчук</item>
+    </string-array>
+</resources>
