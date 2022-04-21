@@ -9,12 +9,14 @@ import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
+import androidx.recyclerview.widget.DiffUtil
 //import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerviewapp.DataSupplier
 import com.example.recyclerviewapp.R
 import com.example.recyclerviewapp.data.ContactData
+import com.example.recyclerviewapp.diff_util.ContactDiffUtilCallBack
 //import com.example.recyclerviewapp.diff_util.ContactDiffUtilCallBack
 import com.squareup.picasso.Picasso
 import java.util.*
@@ -67,14 +69,12 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
                                 ) {
                                     tempList.add(allContacts[i])
                                 }
-                                recyclerView?.adapter = ContactAdapter(tempList)
-                                recyclerView?.adapter?.notifyDataSetChanged()
+                                changeRecyclerData(tempList)
                             }
                         }
                     } else {
                         allContacts?.let {
-                            recyclerView?.adapter = ContactAdapter(allContacts)
-                            recyclerView?.adapter?.notifyDataSetChanged()
+                            changeRecyclerData()
                         }
                     }
                 }
@@ -98,8 +98,7 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
         setHasOptionsMenu(true)
         setFragmentResultListener(REQUEST_KEY) { _, _ ->
             dataSource?.let {
-                recyclerView?.adapter = ContactAdapter(it.getContacts())
-                recyclerView?.adapter!!.notifyDataSetChanged()
+                changeRecyclerData()
             }
         }
     }
@@ -131,20 +130,24 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
         dataSource = null
     }
 
-//    private fun changeRecyclerData() {
-//        recyclerView?.getRecycledViewPool()?.clear()
-//        val conAdapter = recyclerView?.adapter as ContactAdapter
-//        dataSource?.getContacts()?.let {
-//            conAdapter.changeContacts(it)
-//        }
-//    }
-//
-//    private fun changeRecyclerData(list: List<ContactData>) {
-//        recyclerView?.getRecycledViewPool()?.clear()
-//        val conAdapter = recyclerView?.adapter as ContactAdapter
-//        conAdapter.changeContacts(list = list)
-//
-//    }
+    private fun changeRecyclerData() {
+        recyclerView?.getRecycledViewPool()?.clear()
+        val conAdapter = recyclerView?.adapter as ContactAdapter
+        dataSource?.getContacts()?.let {
+            val newList : MutableList<ContactData> = ArrayList()
+            newList.addAll(it)
+            conAdapter.changeContacts(newList as List<ContactData>)
+        }
+    }
+
+    private fun changeRecyclerData(list: List<ContactData>) {
+        recyclerView?.getRecycledViewPool()?.clear()
+        val newList : MutableList<ContactData> = ArrayList()
+        newList.addAll(list)
+        val conAdapter = recyclerView?.adapter as ContactAdapter
+        conAdapter.changeContacts(list = newList as ArrayList)
+
+    }
 
     inner class ContactAdapter(private var contacts: List<ContactData>) : RecyclerView
     .Adapter<ContactAdapter.ContactHolder>() {
@@ -161,15 +164,15 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
             holder.bind(contacts[position])
         }
 
-//        fun changeContacts(list: List<ContactData>) {
-//            val oldContacts = getContactList()
-//            val diffUtilCallback = ContactDiffUtilCallBack(oldList = oldContacts, newList = list)
-//            val result = DiffUtil.calculateDiff(diffUtilCallback, false)
-//            contacts = list
-//            result.dispatchUpdatesTo(this)
-//        }
-//
-//        private fun getContactList() = contacts
+        fun changeContacts(list: List<ContactData>) {
+            val oldContacts = getContactList()
+            val diffUtilCallback = ContactDiffUtilCallBack(oldList = oldContacts, newList = list)
+            val result = DiffUtil.calculateDiff(diffUtilCallback, false)
+            contacts = list
+            result.dispatchUpdatesTo(this)
+        }
+
+        private fun getContactList() = contacts
 
         inner class ContactHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
             View.OnClickListener, View.OnLongClickListener {
