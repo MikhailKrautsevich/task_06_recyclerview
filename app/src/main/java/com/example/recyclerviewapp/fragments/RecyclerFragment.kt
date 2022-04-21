@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerviewapp.DataSupplier
+import com.example.recyclerviewapp.Decoration
 import com.example.recyclerviewapp.R
 import com.example.recyclerviewapp.data.ContactData
 import com.example.recyclerviewapp.diff_util.ContactDiffUtilCallBack
@@ -109,6 +110,7 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
             curLayoutManager = LinearLayoutManager(requireActivity(), RecyclerView.VERTICAL, false)
             it.layoutManager = curLayoutManager
             it.itemAnimator = null
+            it.addItemDecoration(Decoration(20))
         }
         dataSource?.let {
             recyclerView?.adapter = ContactAdapter(it.getContacts())
