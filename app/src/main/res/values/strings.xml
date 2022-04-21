@@ -9,4 +9,8 @@
     <string name="delete_con">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="search_menu">Search</string>
+    <string name="btn_confirm">Confirm</string>
+    <string name="hint_edittext_name">Type name here.</string>
+    <string name="hint_edittext_lastname">Type lastname here.</string>
+    <string name="hint_edittext_number">Type number here.</string>
 </resources>

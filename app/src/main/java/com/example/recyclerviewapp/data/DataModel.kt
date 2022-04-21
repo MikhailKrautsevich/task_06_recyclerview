@@ -55,4 +55,8 @@ class DataModel(context: Context) {
     fun deleteContact(id: Int) {
         contactMap.remove(id)
     }
+
+    fun replaceContact(con: ContactData) {
+        contactMap.put(con.id, con)
+    }
 }

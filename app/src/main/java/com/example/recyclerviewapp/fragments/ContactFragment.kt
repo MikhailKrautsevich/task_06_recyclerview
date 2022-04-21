@@ -2,13 +2,16 @@ package com.example.recyclerviewapp.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import com.example.recyclerviewapp.DataSupplier
 import com.example.recyclerviewapp.R
 import com.example.recyclerviewapp.data.ContactData
@@ -33,11 +36,12 @@ class ContactFragment : Fragment(R.layout.fragment_contact) {
     }
 
     private var dataSource: DataSupplier? = null
-    private var textName: TextView? = null
-    private var textLastName: TextView? = null
-    private var textNumber: TextView? = null
+    private var editName: EditText? = null
+    private var editLastName: EditText? = null
+    private var editNumber: EditText? = null
     private var userPic: ImageView? = null
     private var contact: ContactData? = null
+    private var btnConfirm: Button? = null
     private var contactId: Int = -1
 
     override fun onAttach(context: Context) {
@@ -60,10 +64,11 @@ class ContactFragment : Fragment(R.layout.fragment_contact) {
         savedInstanceState: Bundle?
     ): View? {
         val v = inflater.inflate(R.layout.fragment_contact, container, false)
-        textName = v.findViewById(R.id.text_name)
-        textLastName = v.findViewById(R.id.text_lastname)
-        textNumber = v.findViewById(R.id.text_number)
+        editName = v.findViewById(R.id.edit_name)
+        editLastName = v.findViewById(R.id.edit_lastname)
+        editNumber = v.findViewById(R.id.edit_number)
         userPic = v.findViewById(R.id.userPicBig)
+        btnConfirm = v.findViewById(R.id.btn_confirm)
         return v
     }
 
@@ -76,13 +81,26 @@ class ContactFragment : Fragment(R.layout.fragment_contact) {
         }
         contact?.let {
             setData(it)
+            btnConfirm?.setOnClickListener(object : View.OnClickListener {
+                override fun onClick(p0: View?) {
+                    it.apply {
+                        name = editName?.text?.toString().toString()
+                        lastname = editLastName?.text?.toString().toString()
+                        number = editNumber?.text?.toString().toString()
+                    }
+                    dataSource?.replaceContact(it)
+                    setFragmentResult(RecyclerFragment.REQUEST_KEY, Bundle())
+                    requireActivity().supportFragmentManager.popBackStack()
+                }
+            })
         }
     }
 
     private fun setData(con: ContactData) {
-        textName?.text = con.name
-        textLastName?.text = con.lastname
-        textNumber?.text = con.number
+        val factory = Editable.Factory.getInstance()
+        editName?.text = factory.newEditable(con.name)
+        editLastName?.text = factory.newEditable(con.lastname)
+        editNumber?.text = factory.newEditable(con.number)
         Picasso.get().load(con.getBigPicURL().toUri())
             .placeholder(R.drawable.placeholder)
             .error(R.drawable.placeholder_error)

@@ -28,14 +28,16 @@
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/text_name"
+    <EditText
+        android:id="@+id/edit_name"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="4dp"
         android:layout_weight="1.5"
         android:background="@color/white"
         android:gravity="center"
+        android:hint="@string/hint_edittext_name"
+        android:inputType="textPersonName"
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="28sp"
@@ -55,14 +57,16 @@
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/text_lastname"
+    <EditText
+        android:id="@+id/edit_lastname"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="4dp"
         android:layout_weight="1.5"
         android:background="@color/white"
         android:gravity="center"
+        android:hint="@string/hint_edittext_lastname"
+        android:inputType="textPersonName"
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="28sp"
@@ -82,17 +86,30 @@
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/text_number"
+    <EditText
+        android:id="@+id/edit_number"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="4dp"
         android:layout_weight="1.5"
         android:background="@color/white"
         android:gravity="center"
+        android:hint="@string/hint_edittext_number"
+        android:inputType="number"
         android:maxLines="1"
         android:textColor="@color/black"
         android:textSize="28sp"
         android:textStyle="italic" />
+
+    <Button
+        android:id="@+id/btn_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="4dp"
+        android:layout_weight="1.5"
+        android:backgroundTint="@color/green"
+        android:text="@string/btn_confirm"
+        android:textSize="28sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

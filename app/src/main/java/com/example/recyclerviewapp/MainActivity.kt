@@ -45,4 +45,8 @@ class MainActivity : AppCompatActivity(), DataSupplier {
     override fun deleteContactById(id: Int) {
         model?.deleteContact(id)
     }
+
+    override fun replaceContact(contact: ContactData) {
+        model?.replaceContact(contact)
+    }
 }

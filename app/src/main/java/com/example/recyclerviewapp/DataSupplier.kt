@@ -6,4 +6,5 @@ interface DataSupplier {
     fun getContacts(): ArrayList<ContactData>
     fun getContactById(id: Int): ContactData?
     fun deleteContactById(id: Int)
+    fun replaceContact(contact: ContactData)
 }
