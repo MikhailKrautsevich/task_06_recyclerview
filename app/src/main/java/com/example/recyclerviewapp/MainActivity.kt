@@ -34,17 +34,15 @@ class MainActivity : AppCompatActivity(), DataSupplier {
         return list
     }
 
-    override fun getContactByPosition(pos: Int): ContactData? {
+    override fun getContactById(id: Int): ContactData? {
         var contact: ContactData? = null
         model?.let {
-            contact = it.getContByPos(pos)
+            contact = it.getContById(id)
         }
         return contact
     }
 
-    override fun deleteContactByPos(pos: Int) {
-        model?.deleteContact(pos)
+    override fun deleteContactById(id: Int) {
+        model?.deleteContact(id)
     }
-
-
 }

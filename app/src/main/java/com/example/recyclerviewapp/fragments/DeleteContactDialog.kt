@@ -13,21 +13,21 @@ import java.lang.IllegalStateException
 class DeleteContactDialog : DialogFragment() {
 
     companion object {
-        private const val ARGS_POS = "ARGS_POS1"
+        private const val ARGS_ID = "ARGS_id1"
 
         fun newDeleteContactDialog(pos: Int): DeleteContactDialog {
             val fragment = DeleteContactDialog()
             val bundle = Bundle()
-            bundle.putInt(ARGS_POS, pos)
+            bundle.putInt(ARGS_ID, pos)
             fragment.arguments = bundle
             return fragment
         }
 
-        fun getContactPosFromArgs(bundle: Bundle): Int = bundle.getInt(ARGS_POS)
+        fun getContactPosFromArgs(bundle: Bundle): Int = bundle.getInt(ARGS_ID)
     }
 
     private var dataSource: DataSupplier? = null
-    private var contactPos = -1
+    private var contactId = -1
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -38,12 +38,12 @@ class DeleteContactDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         arguments?.let {
-            contactPos = getContactPosFromArgs(it)
+            contactId = getContactPosFromArgs(it)
         }
         var message = ""
-        if (contactPos >= 0) {
+        if (contactId >= 0) {
             dataSource?.let {
-                val contact = it.getContactByPosition(contactPos)
+                val contact = it.getContactById(contactId)
                 if (contact != null) {
                     message = "${contact.name} ${contact.lastname}"
                 }
@@ -55,7 +55,7 @@ class DeleteContactDialog : DialogFragment() {
                 .setPositiveButton(
                     getString(R.string.delete_con)
                 ) { _, _ ->
-                    dataSource?.deleteContactByPos(contactPos)
+                    dataSource?.deleteContactById(contactId)
                     setFragmentResult(RecyclerFragment.REQUEST_KEY, Bundle())
                     dialog?.cancel()
                 }.setNegativeButton(

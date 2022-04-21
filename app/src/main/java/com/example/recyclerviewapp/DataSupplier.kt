@@ -4,6 +4,6 @@ import com.example.recyclerviewapp.data.ContactData
 
 interface DataSupplier {
     fun getContacts(): ArrayList<ContactData>
-    fun getContactByPosition(pos: Int): ContactData?
-    fun deleteContactByPos(pos: Int)
+    fun getContactById(id: Int): ContactData?
+    fun deleteContactById(id: Int)
 }

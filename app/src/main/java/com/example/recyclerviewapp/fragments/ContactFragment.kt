@@ -17,17 +17,19 @@ import com.squareup.picasso.Picasso
 class ContactFragment : Fragment(R.layout.fragment_contact) {
 
     companion object {
-        private const val ARGS_POS = "ARGS_POS"
+        private const val ARGS_ID = "ARGS_id111"
 
-        fun newContactFragment(pos: Int): ContactFragment {
+        fun newContactFragment(id: Int): ContactFragment {
             val fragment = ContactFragment()
             val bundle = Bundle()
-            bundle.putInt(ARGS_POS, pos)
+            bundle.putInt(ARGS_ID, id)
             fragment.arguments = bundle
             return fragment
         }
 
-        fun getContactPosFromArgs(bundle: Bundle): Int = bundle.getInt(ARGS_POS)
+        fun getContactIdFromArgs(bundle: Bundle): Int {
+            return bundle.getInt(ARGS_ID)
+        }
     }
 
     private var dataSource: DataSupplier? = null
@@ -36,7 +38,7 @@ class ContactFragment : Fragment(R.layout.fragment_contact) {
     private var textNumber: TextView? = null
     private var userPic: ImageView? = null
     private var contact: ContactData? = null
-    private var contactPosition: Int = -1
+    private var contactId: Int = -1
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -48,7 +50,7 @@ class ContactFragment : Fragment(R.layout.fragment_contact) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            contactPosition = getContactPosFromArgs(it)
+            contactId = getContactIdFromArgs(it)
         }
     }
 
@@ -68,8 +70,8 @@ class ContactFragment : Fragment(R.layout.fragment_contact) {
     override fun onStart() {
         super.onStart()
         dataSource?.let {
-            if (contactPosition >= 0) {
-                contact = it.getContactByPosition(contactPosition)
+            if (contactId >= 0) {
+                contact = it.getContactById(contactId)
             }
         }
         contact?.let {

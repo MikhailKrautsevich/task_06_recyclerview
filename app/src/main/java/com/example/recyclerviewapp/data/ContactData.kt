@@ -1,6 +1,7 @@
 package com.example.recyclerviewapp.data
 
 data class ContactData(
+    var id: Int = 0,
     var name: String,
     var lastname: String,
     var number: String,

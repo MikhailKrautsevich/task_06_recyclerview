@@ -9,11 +9,13 @@ import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recyclerviewapp.DataSupplier
 import com.example.recyclerviewapp.R
 import com.example.recyclerviewapp.data.ContactData
+import com.example.recyclerviewapp.diff_util.ContactDiffUtilCallBack
 import com.squareup.picasso.Picasso
 import java.util.*
 import kotlin.collections.ArrayList
@@ -65,14 +67,12 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
                                 ) {
                                     tempList.add(allContacts[i])
                                 }
-                                recyclerView?.adapter = ContactAdapter(tempList)
-                                recyclerView?.adapter?.notifyDataSetChanged()
+                                changeRecyclerData(tempList)
                             }
                         }
                     } else {
                         allContacts?.let {
-                            recyclerView?.adapter = ContactAdapter(it)
-                            recyclerView?.adapter?.notifyDataSetChanged()
+                            changeRecyclerData(allContacts)
                         }
                     }
                 }
@@ -95,7 +95,7 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         setFragmentResultListener(REQUEST_KEY) { _, _ ->
-            recyclerView?.adapter?.notifyDataSetChanged()
+            changeRecyclerData()
         }
     }
 
@@ -104,6 +104,7 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
         recyclerView?.let {
             curLayoutManager = LinearLayoutManager(requireActivity(), RecyclerView.VERTICAL, false)
             it.layoutManager = curLayoutManager
+            it.itemAnimator = null
         }
         dataSource?.let {
             recyclerView?.adapter = ContactAdapter(it.getContacts())
@@ -125,41 +126,23 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
         dataSource = null
     }
 
-    inner class ContactAdapter(private val contacts: List<ContactData>) : RecyclerView
-    .Adapter<ContactAdapter.ContactHolder>() {
-
-        inner class ContactHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
-            View.OnClickListener, View.OnLongClickListener {
-            private val contactPic: ImageView = itemView.findViewById(R.id.userPic)
-            private val contactInfo: TextView = itemView.findViewById(R.id.contactData)
-
-            init {
-                itemView.setOnClickListener(this)
-                itemView.setOnLongClickListener(this)
-            }
-
-            override fun onClick(p0: View?) {
-                requireActivity().supportFragmentManager.beginTransaction().replace(
-                    R.id.fragment_container,
-                    ContactFragment.newContactFragment(adapterPosition),
-                    null
-                ).addToBackStack("TAG").commit()
-            }
-
-            fun bind(contact: ContactData) {
-                picasso.load(contact.getSmallPicURL().toUri())
-                    .placeholder(R.drawable.placeholder)
-                    .error(R.drawable.placeholder_error)
-                    .into(contactPic)
-                contactInfo.text = contact.toString()
-            }
-
-            override fun onLongClick(p0: View?): Boolean {
-                val dialog = DeleteContactDialog.newDeleteContactDialog(adapterPosition)
-                dialog.show(requireActivity().supportFragmentManager, "TAG!")
-                return true
-            }
+    private fun changeRecyclerData() {
+        recyclerView?.getRecycledViewPool()?.clear()
+        val conAdapter = recyclerView?.adapter as ContactAdapter
+        dataSource?.getContacts()?.let {
+            conAdapter.changeContacts(it)
         }
+    }
+
+    private fun changeRecyclerData(list: List<ContactData>) {
+        recyclerView?.getRecycledViewPool()?.clear()
+        val conAdapter = recyclerView?.adapter as ContactAdapter
+        conAdapter.changeContacts(list = list)
+
+    }
+
+    inner class ContactAdapter(private var contacts: List<ContactData>) : RecyclerView
+    .Adapter<ContactAdapter.ContactHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactHolder {
             val itemView = LayoutInflater.from(parent.context)
@@ -171,6 +154,55 @@ class RecyclerFragment : Fragment(R.layout.fragment_recycler) {
 
         override fun onBindViewHolder(holder: ContactHolder, position: Int) {
             holder.bind(contacts[position])
+        }
+
+        fun changeContacts(list: List<ContactData>) {
+            val oldContacts = getContactList()
+            val diffUtilCallback = ContactDiffUtilCallBack(oldList = oldContacts, newList = list)
+            val result = DiffUtil.calculateDiff(diffUtilCallback, false)
+            contacts = list
+            result.dispatchUpdatesTo(this)
+        }
+
+        private fun getContactList() = contacts
+
+        inner class ContactHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+            View.OnClickListener, View.OnLongClickListener {
+            private val contactPic: ImageView = itemView.findViewById(R.id.userPic)
+            private val contactInfo: TextView = itemView.findViewById(R.id.contactData)
+            private var contactBinded: ContactData? = null
+
+            init {
+                itemView.setOnClickListener(this)
+                itemView.setOnLongClickListener(this)
+            }
+
+            override fun onClick(p0: View?) {
+                contactBinded?.let {
+                    requireActivity().supportFragmentManager.beginTransaction().replace(
+                        R.id.fragment_container,
+                        ContactFragment.newContactFragment(it.id),
+                        null
+                    ).addToBackStack("TAG").commit()
+                }
+            }
+
+            fun bind(contact: ContactData) {
+                contactBinded = contact
+                picasso.load(contact.getSmallPicURL().toUri())
+                    .placeholder(R.drawable.placeholder)
+                    .error(R.drawable.placeholder_error)
+                    .into(contactPic)
+                contactInfo.text = contact.toString()
+            }
+
+            override fun onLongClick(p0: View?): Boolean {
+                contactBinded?.let {
+                    val dialog = DeleteContactDialog.newDeleteContactDialog(it.id)
+                    dialog.show(requireActivity().supportFragmentManager, "TAG!")
+                }
+                return true
+            }
         }
     }
 }
